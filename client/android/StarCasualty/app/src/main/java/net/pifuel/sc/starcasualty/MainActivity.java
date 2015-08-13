@@ -22,7 +22,7 @@ public class MainActivity extends ActionBarActivity {
         WebSettings webSettings = mWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         mWebView.setWebViewClient(new WebViewClient());
-        mWebView.loadUrl("http://starcasualty.com/2015/");
+        mWebView.loadUrl("http://www.starcasualty.com/2015/");
     }
 
     @Override
