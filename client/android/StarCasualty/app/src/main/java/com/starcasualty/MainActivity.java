@@ -1,14 +1,12 @@
-package net.pifuel.sc.starcasualty;
+package com.starcasualty;
 
 import android.app.Activity;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
-import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -19,7 +17,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.StringBufferInputStream;
 import java.io.UnsupportedEncodingException;
 
 
@@ -113,7 +110,7 @@ public class MainActivity extends Activity {
         Log.i(TAG, "Starting to load HTML from disk.");
         loadHtmlToString();
         Log.i(TAG, "HTML:" + mLocalHtmlFile);
-        webView.loadDataWithBaseURL("http://www.starcasualty.com", mLocalHtmlFile,
+        webView.loadDataWithBaseURL("http://www.com.starcasualty.com", mLocalHtmlFile,
                 MIME_TYPE_DEFAULT, "utf-8", null);
     }
 
@@ -137,7 +134,7 @@ public class MainActivity extends Activity {
             }
         }
         mLocalHtmlFile = htmlBuilder.toString();
-        webView.loadDataWithBaseURL("http://www.starcasualty.com", mLocalHtmlFile,
+        webView.loadDataWithBaseURL("http://www.com.starcasualty.com", mLocalHtmlFile,
                 "text/html", DEFAULT_ENCODING, null);
         webView.clearHistory();
     }
@@ -145,7 +142,7 @@ public class MainActivity extends Activity {
     private class MyWebViewClient extends WebViewClient {
         @Override
         public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-            if (url.startsWith("http://www.starcasualty.com/2015/index.cfm")) {
+            if (url.startsWith("http://www.com.starcasualty.com/2015/index.cfm")) {
                 Log.i(TAG, "NOT going to network for URL:" + url);
                 try {
                     return new WebResourceResponse(MIME_TYPE_DEFAULT, DEFAULT_ENCODING,
