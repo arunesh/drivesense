@@ -1,6 +1,8 @@
 package com.starcasualty;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -44,7 +46,7 @@ public class MainActivity extends Activity {
         loadHtmlToString();
         mWebView.loadUrl("file:///android_asset/starmain.html");
         //loadWebViewFromLocalHtml(mWebView);
-        //mWebView.loadUrl("http://www.starcasualty.com/2015/");
+        //mWebView.loadUrl("http://www.starcasualty.com/");
     }
 
     @Override
@@ -107,7 +109,7 @@ public class MainActivity extends Activity {
         mLocalHtmlFile = stringBuffer.toString();
     }
     private void loadWebViewFromLocalHtml(WebView webView) {
-        Log.i(TAG, "Starting to load HTML from disk.");
+        Log.d(TAG, "Starting to load HTML from disk.");
         loadHtmlToString();
         Log.i(TAG, "HTML:" + mLocalHtmlFile);
         webView.loadDataWithBaseURL("http://www.com.starcasualty.com", mLocalHtmlFile,
@@ -115,7 +117,7 @@ public class MainActivity extends Activity {
     }
 
     private void loadWebViewFromLocalHtml1(WebView webView) {
-        Log.i(TAG, "Starting to load HTML from disk.");
+        Log.d(TAG, "Starting to load HTML from disk.");
         StringBuilder htmlBuilder = new StringBuilder(HTML_FILE_SIZE);
         InputStream is = getResources().openRawResource(R.raw.starmain);
         if (is == null) {
@@ -130,7 +132,7 @@ public class MainActivity extends Activity {
                 //Log.i(TAG, "Read line: " + line);
             } catch (IOException e) {
                 doneReading = true;
-                Log.i(TAG, "Done reading HTML index file.");
+                Log.d(TAG, "Done reading HTML index file.");
             }
         }
         mLocalHtmlFile = htmlBuilder.toString();
@@ -142,8 +144,8 @@ public class MainActivity extends Activity {
     private class MyWebViewClient extends WebViewClient {
         @Override
         public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-            if (url.startsWith("http://www.com.starcasualty.com/2015/index.cfm")) {
-                Log.i(TAG, "NOT going to network for URL:" + url);
+            if (url.startsWith("http://www.com.starcasualty.com/index.cfm")) {
+                Log.d(TAG, "NOT going to network for URL:" + url);
                 try {
                     return new WebResourceResponse(MIME_TYPE_DEFAULT, DEFAULT_ENCODING,
                             new ByteArrayInputStream(mLocalHtmlFile.getBytes(DEFAULT_ENCODING)));
@@ -152,26 +154,38 @@ public class MainActivity extends Activity {
                     return null;
                 }
             }
-            Log.i(TAG, "Going to network for Request: " + url);
+            Log.d(TAG, "Going to network for Request: " + url);
             return super.shouldInterceptRequest(view, url);
         }
         @Override
         public void onPageFinished(WebView view, String url) {
-            Log.i(TAG, "onPageFinished:" + url);
+            Log.v(TAG, "onPageFinished:" + url);
             if (url.endsWith("agentlogin")) {
-                Log.i(TAG, "Triggering agentLoginEnable().");
+                Log.v(TAG, "Triggering agentLoginEnable().");
                 view.loadUrl("javascript:agentLoginEnable()");
             } else if (url.endsWith("policyholders")) {
-                Log.i(TAG, "Triggering policyHolderEnable().");
+                Log.v(TAG, "Triggering policyHolderEnable().");
                 view.loadUrl("javascript:policyHoldersEnable()");
             }
+        }
+
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            if( url.startsWith("http:") || url.startsWith("https:") ) {
+                return false;
+            }
+
+            // Otherwise allow the OS to handle it
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            startActivity(intent);
+            return true;
         }
 
         // TODO: Runtime check of API method (21 versus 15)
  //       @Override
  //       public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
  //           String urlString = request.getUrl().toString();
- //           if (urlString.startsWith("http://www.starcasualty.com/2015/index.cfm")) {
+ //           if (urlString.startsWith("http://www.starcasualty.com/index.cfm")) {
   //              try {
   //                  new WebResourceResponse(MIME_TYPE_DEFAULT, DEFAULT_ENCODING,
    //                         new ByteArrayInputStream(mLocalHtmlFile.getBytes(DEFAULT_ENCODING)));
